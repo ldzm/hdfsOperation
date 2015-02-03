@@ -1,38 +1,26 @@
 package edu.ldzm.hdfs;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import org.apache.hadoop.fs.FSDataOutputStream;
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IOUtils;
 
 public class HdfsOperation {
 	
-	public boolean putFile2Hdfs(FileSystem fileSystem, File from, Path to) {
-		
-        FileInputStream in = null;
-        try {
-            in = new FileInputStream(from.getAbsolutePath());
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+    public static final String HDFS_PATH = "hdfs://sky:9000";
+    public static final String DIR_PATH = "/home/sky/Desktop/hello.txt";
+    public static final String FILE_PATH = "/d1000/f1000";
+	
+	public static void main(String[] args) throws IOException {
+        FileSystem hdfsFileSystem = null;
+        Configuration config = null;
         
-        FSDataOutputStream out = null;
-        try {
-            out = fileSystem.create(to);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            IOUtils.copyBytes(in, out, 1024, true);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-		return true;
+        config = new Configuration();
+        
+        config.set("fs.default.name", HDFS_PATH);
+        hdfsFileSystem = FileSystem.get(config);
+        
+        hdfsFileSystem.copyFromLocalFile(new Path(DIR_PATH), new Path(FILE_PATH));
 	}
 }
